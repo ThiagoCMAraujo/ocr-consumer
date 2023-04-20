@@ -1,0 +1,26 @@
+{
+  "name": "moderna-backend",
+  "version": "1.0.0",
+  "main": "index.js",
+  "author": "Teasy Solutions",
+  "scripts": {
+    "prepare": "husky install",
+    "test": "vitest --run --reporter verbose",
+    "test:watch": "vitest --reporter verbose",
+    "format": "npx prettier --write .",
+    "deploy:dev": "sls deploy --stage dev --aws-profile teasy",
+    "deploy:thiago": "sls deploy --stage deviolas --aws-profile teasy",
+    "remove:thiago": "sls remove --stage deviolas --aws-profile teasy",
+    "info:thiago": "sls info --stage deviolas --aws-profile teasy"
+  },
+  "devDependencies": {
+    "husky": "^8.0.3",
+    "prettier": "^2.8.4",
+    "sequelize-cli": "^6.6.0",
+    "vitest": "^0.28.5"
+  },
+  "dependencies": {
+    "@aws-sdk/client-dynamodb": "^3.312.0",
+    "@aws-sdk/lib-dynamodb": "^3.312.0"
+  }
+}

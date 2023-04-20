@@ -1,0 +1,20 @@
+service: ocr-consumer
+frameworkVersion: '3'
+
+provider:
+  name: aws
+  runtime: nodejs18.x
+
+functions:
+  consumer:
+    handler: handler.consumer
+    events:
+      - schedule: rate(2 minutes)
+    layers:
+      - { Ref: OcrSchedulerModulesLambdaLayer }
+
+layers:
+  OcrSchedulerModules:
+    path: layer
+    compatibleRuntimes:
+      - nodejs16.x
