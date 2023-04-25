@@ -4,12 +4,42 @@ frameworkVersion: '3'
 provider:
   name: aws
   runtime: nodejs18.x
+  stage: ${opt:stage, 'dev'}
+  region: us-east-1
+  environment:
+    AMQP_URL: amqp://ec2-34-229-217-104.compute-1.amazonaws.com
+    RENDER_URL: https://7zla0tcabi.execute-api.us-east-1.amazonaws.com
+    DYNAMODB_OCR_IMAGES_TABLE: OcrImages-${self:provider.stage}
+  
+  iam:
+    role:
+      statements:
+        - Effect: Allow
+          Action:
+            - dynamodb:DescribeTable
+            - dynamodb:Query
+            - dynamodb:Scan
+            - dynamodb:GetItem
+            - dynamodb:PutItem
+            - dynamodb:UpdateItem
+            - dynamodb:DeleteItem
+            - lambda:InvokeFunction
+          Resource:
+            - 'arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.DYNAMODB_OCR_IMAGES_TABLE}'
 
 functions:
   consumer:
     handler: handler.consumer
     events:
-      - schedule: rate(2 minutes)
+      - schedule: rate(1 minute)
+    layers:
+      - { Ref: OcrSchedulerModulesLambdaLayer }
+  render:
+    handler: handler.render
+    events:
+      - httpApi:
+          path: /render
+          method: post
     layers:
       - { Ref: OcrSchedulerModulesLambdaLayer }
 
